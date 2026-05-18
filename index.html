@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="uk">
   <head>
     <meta charset="UTF-8" />
@@ -125,15 +125,15 @@
               </h1>
               <p class="text-emerald-100 text-base sm:text-lg mb-6">
                 Сталі вирази та ідіоми роблять вашу англійську живою та
-                природною. Повторюйте їх за розумною інтервальною системою по 10
-                за раз.
+                природною. Повторюйте їх за розумною інтервальною системою або
+                проходьте тести.
               </p>
               <button
                 @click="openStudySetup"
                 class="bg-teal-500 hover:bg-teal-400 text-white font-semibold px-6 py-3.5 rounded-2xl shadow-lg shadow-teal-950/30 flex items-center space-x-2 transition-all transform hover:-translate-y-0.5"
               >
                 <i class="fa-solid fa-circle-play text-lg"></i>
-                <span>Почати повторення (10 ідіом)</span>
+                <span>Почати тренування (10 ідіом)</span>
               </button>
             </div>
           </div>
@@ -583,6 +583,11 @@
               <i class="fa-solid fa-xmark"></i>
               <span>Завершити</span>
             </button>
+            <div
+              class="text-xs font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-xl"
+            >
+              {{ studyMode === 'cards' ? 'Режим карток 🎴' : 'Режим тесту 📝' }}
+            </div>
             <div class="text-sm text-slate-500 font-semibold">
               Сесія: {{ currentVerbIndex + 1 }} з {{ studyQueue.length }}
             </div>
@@ -596,156 +601,286 @@
             ></div>
           </div>
 
-          <!-- Active Card Container -->
-          <div
-            class="perspective-1000 w-full min-h-[350px]"
-            v-if="currentStudyVerb"
-          >
-            <div :class="cardDynamicClass" @click="flipCard">
-              <!-- Card Front (English Phrase) -->
-              <div
-                class="absolute inset-0 w-full h-full bg-white rounded-3xl p-8 shadow-md border border-emerald-100 flex flex-col justify-between backface-hidden"
-              >
-                <div class="flex justify-between items-center w-full">
-                  <span
-                    class="text-xs font-semibold uppercase tracking-wider bg-emerald-50 text-emerald-600 px-3 py-1.5 rounded-xl"
-                  >
-                    {{ getTopicName(currentStudyVerb.topicId) }}
-                  </span>
-                  <span class="text-xs text-slate-400">
-                    Клікніть, щоб дізнатися значення
-                  </span>
-                </div>
-
-                <div class="text-center py-6">
-                  <h2
-                    class="text-2xl sm:text-3xl font-extrabold text-emerald-950 tracking-tight mb-3 px-2"
-                  >
-                    {{ currentStudyVerb.verb }}
-                  </h2>
-                  <p
-                    class="text-xs text-emerald-600 uppercase font-bold tracking-widest mt-2"
-                  >
-                    Англійська ідіома
-                  </p>
-                </div>
-
+          <!-- REGULAR FLASHCARDS MODE -->
+          <div v-if="studyMode === 'cards'" class="space-y-6">
+            <!-- Active Card Container -->
+            <div
+              class="perspective-1000 w-full min-h-[350px]"
+              v-if="currentStudyVerb"
+            >
+              <div :class="cardDynamicClass" @click="flipCard">
+                <!-- Card Front (English Phrase) -->
                 <div
-                  class="text-center text-slate-400 text-sm border-t border-slate-50 pt-4 flex items-center justify-center space-x-2"
+                  class="absolute inset-0 w-full h-full bg-white rounded-3xl p-8 shadow-md border border-emerald-100 flex flex-col justify-between backface-hidden"
                 >
-                  <i class="fa-solid fa-arrow-rotate-left"></i>
-                  <span>Клацніть для перевороту картки</span>
-                </div>
-              </div>
-
-              <!-- Card Back (Ukrainian Translation + Details) -->
-              <div
-                class="absolute inset-0 w-full h-full bg-white rounded-3xl p-8 shadow-md border border-emerald-100 flex flex-col justify-between backface-hidden rotate-y-180"
-              >
-                <div class="flex justify-between items-center w-full">
-                  <span
-                    class="text-xs font-semibold uppercase tracking-wider bg-emerald-50 text-emerald-600 px-3 py-1.5 rounded-xl"
-                  >
-                    {{ getTopicName(currentStudyVerb.topicId) }}
-                  </span>
-                  <span
-                    class="text-xs text-emerald-600 font-semibold bg-emerald-50 px-2.5 py-1 rounded-lg"
-                  >
-                    {{ getStatusLabel(currentStudyVerb.status) }}
-                  </span>
-                </div>
-
-                <div
-                  class="text-center py-4 space-y-3 overflow-y-auto max-h-[250px] pr-1"
-                >
-                  <div class="text-slate-400 text-sm font-semibold">
-                    Значення та переклад:
+                  <div class="flex justify-between items-center w-full">
+                    <span
+                      class="text-xs font-semibold uppercase tracking-wider bg-emerald-50 text-emerald-600 px-3 py-1.5 rounded-xl"
+                    >
+                      {{ getTopicName(currentStudyVerb.topicId) }}
+                    </span>
+                    <span class="text-xs text-slate-400">
+                      Клікніть, щоб дізнатися значення
+                    </span>
                   </div>
-                  <h2
-                    class="text-xl sm:text-2xl font-extrabold text-emerald-950 tracking-tight leading-snug px-2"
-                  >
-                    {{ currentStudyVerb.translation }}
-                  </h2>
 
-                  <!-- Context / Example -->
-                  <div
-                    v-if="currentStudyVerb.example"
-                    class="bg-emerald-50/50 p-4 rounded-xl border border-emerald-100/50 text-left mt-4"
-                  >
-                    <div
-                      class="text-xs font-bold text-emerald-800 uppercase tracking-wider mb-1"
+                  <div class="text-center py-6">
+                    <h2
+                      class="text-2xl sm:text-3xl font-extrabold text-emerald-950 tracking-tight mb-3 px-2"
                     >
-                      Приклад використання:
-                    </div>
+                      {{ currentStudyVerb.verb }}
+                    </h2>
                     <p
-                      class="text-sm italic text-emerald-900 font-medium leading-relaxed"
+                      class="text-xs text-emerald-600 uppercase font-bold tracking-widest mt-2"
                     >
-                      "{{ currentStudyVerb.example }}"
+                      Англійська ідіома
                     </p>
                   </div>
+
+                  <div
+                    class="text-center text-slate-400 text-sm border-t border-slate-50 pt-4 flex items-center justify-center space-x-2"
+                  >
+                    <i class="fa-solid fa-arrow-rotate-left"></i>
+                    <span>Клацніть для перевороту картки</span>
+                  </div>
                 </div>
 
+                <!-- Card Back (Ukrainian Translation + Details) -->
                 <div
-                  class="text-center text-slate-400 text-xs border-t border-slate-50 pt-3"
+                  class="absolute inset-0 w-full h-full bg-white rounded-3xl p-8 shadow-md border border-emerald-100 flex flex-col justify-between backface-hidden rotate-y-180"
                 >
-                  Клацніть будь-де, щоб подивитися оригінал
+                  <div class="flex justify-between items-center w-full">
+                    <span
+                      class="text-xs font-semibold uppercase tracking-wider bg-emerald-50 text-emerald-600 px-3 py-1.5 rounded-xl"
+                    >
+                      {{ getTopicName(currentStudyVerb.topicId) }}
+                    </span>
+                    <span
+                      class="text-xs text-emerald-600 font-semibold bg-emerald-50 px-2.5 py-1 rounded-lg"
+                    >
+                      {{ getStatusLabel(currentStudyVerb.status) }}
+                    </span>
+                  </div>
+
+                  <div
+                    class="text-center py-4 space-y-3 overflow-y-auto max-h-[250px] pr-1"
+                  >
+                    <div class="text-slate-400 text-sm font-semibold">
+                      Значення та переклад:
+                    </div>
+                    <h2
+                      class="text-xl sm:text-2xl font-extrabold text-emerald-950 tracking-tight leading-snug px-2"
+                    >
+                      {{ currentStudyVerb.translation }}
+                    </h2>
+
+                    <!-- Context / Example -->
+                    <div
+                      v-if="currentStudyVerb.example"
+                      class="bg-emerald-50/50 p-4 rounded-xl border border-emerald-100/50 text-left mt-4"
+                    >
+                      <div
+                        class="text-xs font-bold text-emerald-800 uppercase tracking-wider mb-1"
+                      >
+                        Приклад використання:
+                      </div>
+                      <p
+                        class="text-sm italic text-emerald-900 font-medium leading-relaxed"
+                      >
+                        "{{ currentStudyVerb.example }}"
+                      </p>
+                    </div>
+                  </div>
+
+                  <div
+                    class="text-center text-slate-400 text-xs border-t border-slate-50 pt-3"
+                  >
+                    Клацніть будь-де, щоб подивитися оригінал
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Controls (Reveal & Easy/Medium/Hard Scoring Buttons) -->
+            <div class="space-y-4">
+              <!-- If not flipped, show Reveal button -->
+              <button
+                v-if="isCardNotFlipped"
+                @click="flipCard"
+                class="w-full py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-2xl shadow-lg shadow-emerald-100 transition-colors flex items-center justify-center space-x-2 text-base"
+              >
+                <i class="fa-solid fa-eye"></i>
+                <span>Показати переклад та значення</span>
+              </button>
+
+              <!-- If flipped, show spaced repetition grading options -->
+              <div v-else class="space-y-3">
+                <p
+                  class="text-center text-xs text-slate-500 font-semibold uppercase tracking-wider"
+                >
+                  Чи добре ви пам’ятаєте цю ідіому?
+                </p>
+                <div class="grid grid-cols-3 gap-3">
+                  <!-- HARD -->
+                  <button
+                    @click="gradeHard"
+                    class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 p-4 rounded-2xl transition-all flex flex-col items-center justify-center space-y-1"
+                  >
+                    <span class="text-lg font-bold">🔴 Важко</span>
+                    <span
+                      class="text-[10px] text-rose-500 font-medium text-center"
+                      >Забув(ла) геть</span
+                    >
+                  </button>
+                  <!-- MEDIUM -->
+                  <button
+                    @click="gradeLearning"
+                    class="bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 p-4 rounded-2xl transition-all flex flex-col items-center justify-center space-y-1"
+                  >
+                    <span class="text-lg font-bold">🟡 Середнє</span>
+                    <span
+                      class="text-[10px] text-amber-500 font-medium text-center"
+                      >Згадав(ла) важко</span
+                    >
+                  </button>
+                  <!-- EASY -->
+                  <button
+                    @click="gradeMastered"
+                    class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 p-4 rounded-2xl transition-all flex flex-col items-center justify-center space-y-1"
+                  >
+                    <span class="text-lg font-bold">🟢 Легко</span>
+                    <span
+                      class="text-[10px] text-emerald-500 font-medium text-center"
+                      >Пам’ятаю добре</span
+                    >
+                  </button>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Controls (Reveal & Easy/Medium/Hard Scoring Buttons) -->
-          <div class="space-y-4">
-            <!-- If not flipped, show Reveal button -->
-            <button
-              v-if="isCardNotFlipped"
-              @click="flipCard"
-              class="w-full py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-2xl shadow-lg shadow-emerald-100 transition-colors flex items-center justify-center space-x-2 text-base"
+          <!-- MULTIPLE CHOICE QUIZ MODE -->
+          <div v-else class="space-y-6" v-if="currentStudyVerb">
+            <!-- Question Block -->
+            <div
+              class="bg-white rounded-3xl p-8 shadow-md border border-emerald-100 text-center space-y-4"
             >
-              <i class="fa-solid fa-eye"></i>
-              <span>Показати переклад та значення</span>
-            </button>
-
-            <!-- If flipped, show spaced repetition grading options -->
-            <div v-else class="space-y-3">
-              <p
-                class="text-center text-xs text-slate-500 font-semibold uppercase tracking-wider"
+              <span
+                class="text-xs font-semibold uppercase tracking-wider bg-emerald-50 text-emerald-600 px-3 py-1.5 rounded-xl inline-block"
               >
-                Чи добре ви пам’ятаєте цю ідіому?
-              </p>
-              <div class="grid grid-cols-3 gap-3">
-                <!-- HARD -->
-                <button
-                  @click="gradeHard"
-                  class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 p-4 rounded-2xl transition-all flex flex-col items-center justify-center space-y-1"
+                {{ getTopicName(currentStudyVerb.topicId) }}
+              </span>
+
+              <div class="space-y-2">
+                <p
+                  class="text-xs text-slate-400 font-bold uppercase tracking-widest"
                 >
-                  <span class="text-lg font-bold">🔴 Важко</span>
-                  <span
-                    class="text-[10px] text-rose-500 font-medium text-center"
-                    >Забув(ла) геть</span
-                  >
-                </button>
-                <!-- MEDIUM -->
-                <button
-                  @click="gradeLearning"
-                  class="bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 p-4 rounded-2xl transition-all flex flex-col items-center justify-center space-y-1"
+                  {{ quizDirection === 'en-ua' ? 'Оберіть правильний переклад:'
+                  : 'Знайдіть англійський відповідник:' }}
+                </p>
+                <h2
+                  class="text-2xl sm:text-3xl font-extrabold text-emerald-950 tracking-tight leading-snug px-2"
                 >
-                  <span class="text-lg font-bold">🟡 Середнє</span>
-                  <span
-                    class="text-[10px] text-amber-500 font-medium text-center"
-                    >Згадав(ла) важко</span
-                  >
-                </button>
-                <!-- EASY -->
-                <button
-                  @click="gradeMastered"
-                  class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 p-4 rounded-2xl transition-all flex flex-col items-center justify-center space-y-1"
+                  {{ quizDirection === 'en-ua' ? currentStudyVerb.verb :
+                  currentStudyVerb.translation }}
+                </h2>
+              </div>
+
+              <!-- Context clue (optional, but only show if already answered to help learn) -->
+              <div
+                v-if="isAnswered && currentStudyVerb.example"
+                class="bg-emerald-50/50 p-4 rounded-2xl border border-emerald-100/30 text-left transition-all"
+              >
+                <div
+                  class="text-xs font-bold text-emerald-800 uppercase tracking-wider mb-1"
                 >
-                  <span class="text-lg font-bold">🟢 Легко</span>
-                  <span
-                    class="text-[10px] text-emerald-500 font-medium text-center"
-                    >Пам’ятаю добре</span
+                  Контекст:
+                </div>
+                <p class="text-sm italic text-emerald-900">
+                  "{{ currentStudyVerb.example }}"
+                </p>
+              </div>
+            </div>
+
+            <!-- 4 Options Grid -->
+            <div class="grid grid-cols-1 gap-3">
+              <button
+                v-for="(option, index) in quizOptions"
+                :key="index"
+                @click="selectOption(index)"
+                :disabled="isAnswered"
+                :class="getOptionClass(option, index)"
+                class="p-4 rounded-2xl border text-left font-medium text-sm transition-all flex items-center justify-between"
+              >
+                <span>{{ option.text }}</span>
+
+                <!-- Status Icons inside option buttons -->
+                <span v-if="isAnswered">
+                  <i
+                    v-if="option.isCorrect"
+                    class="fa-solid fa-circle-check text-emerald-600 text-lg"
+                  ></i>
+                  <i
+                    v-else-if="selectedOption === index && !option.isCorrect"
+                    class="fa-solid fa-circle-xmark text-rose-600 text-lg"
+                  ></i>
+                </span>
+              </button>
+            </div>
+
+            <!-- Interactive Post-Answer Action Panels -->
+            <div v-if="isAnswered" class="transition-all duration-300">
+              <!-- CORRECT ANSWER: Ask whether to master it -->
+              <div
+                v-if="isCorrectAnswer"
+                class="bg-emerald-50 border border-emerald-200 rounded-2xl p-6 text-center space-y-4 shadow-sm"
+              >
+                <div
+                  class="text-emerald-800 font-bold text-base flex items-center justify-center space-x-2"
+                >
+                  <i class="fa-solid fa-face-smile-wink text-xl"></i>
+                  <span>Абсолютно вірно!</span>
+                </div>
+                <p class="text-xs text-emerald-950 leading-relaxed font-medium">
+                  Чи ви впевнено знаєте цю ідіому? Додати її у «Вивчені»
+                  (показуватиметься значно рідше)?
+                </p>
+                <div class="flex items-center justify-center gap-3">
+                  <button
+                    @click="handleMasteryChoice(true)"
+                    class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-5 py-2.5 rounded-xl transition-all"
                   >
+                    Так, це було легко! 🟢
+                  </button>
+                  <button
+                    @click="handleMasteryChoice(false)"
+                    class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs px-5 py-2.5 rounded-xl transition-all"
+                  >
+                    Ні, нехай буде в процесі 🟡
+                  </button>
+                </div>
+              </div>
+
+              <!-- INCORRECT ANSWER: Notify reset and show Next button -->
+              <div
+                v-else
+                class="bg-rose-50 border border-rose-200 rounded-2xl p-6 text-center space-y-4 shadow-sm"
+              >
+                <div
+                  class="text-rose-800 font-bold text-base flex items-center justify-center space-x-2"
+                >
+                  <i class="fa-solid fa-triangle-exclamation text-xl"></i>
+                  <span>Помилка!</span>
+                </div>
+                <p class="text-xs text-rose-950 leading-relaxed font-medium">
+                  Статус ідіоми було автоматично скинуто до початкового стану
+                  («Нова ідіома»). Спробуйте запам’ятати її правильне значення!
+                </p>
+                <button
+                  @click="handleWrongAnswerNext"
+                  class="bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs px-6 py-2.5 rounded-xl transition-all shadow-md"
+                >
+                  Продовжити ➔
                 </button>
               </div>
             </div>
@@ -768,7 +903,7 @@
               Чудове тренування!
             </h2>
             <p class="text-slate-500 max-w-md mx-auto">
-              Ви щойно повторили {{ studyQueue.length }} стійких ідіом. Їхній
+              Ви щойно повторили {{ studyQueue.length }} стійких ідіоми. Їхній
               статус у системі інтервального навчання був автоматично оновлений.
             </p>
           </div>
@@ -1038,13 +1173,64 @@
           </div>
 
           <div class="p-6 space-y-5">
+            <!-- Learning Mode Selector -->
             <div class="space-y-2">
               <label
                 class="text-xs font-bold text-slate-500 uppercase tracking-wider block"
-                >Оберіть теми ідіом для вивчення:</label
+                >Режим навчання:</label
+              >
+              <div class="grid grid-cols-2 gap-2">
+                <button
+                  @click="studyMode = 'cards'"
+                  :class="studyMode === 'cards' ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'"
+                  class="py-2.5 px-4 rounded-xl border font-semibold text-xs flex items-center justify-center space-x-2 transition-all"
+                >
+                  <i class="fa-solid fa-clone text-sm"></i>
+                  <span>Класичні Картки</span>
+                </button>
+                <button
+                  @click="studyMode = 'quiz'"
+                  :class="studyMode === 'quiz' ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'"
+                  class="py-2.5 px-4 rounded-xl border font-semibold text-xs flex items-center justify-center space-x-2 transition-all"
+                >
+                  <i class="fa-solid fa-list-ol text-sm"></i>
+                  <span>Тест (4 варіанти)</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Quiz Direction (Only visible in Quiz mode) -->
+            <div class="space-y-2 transition-all" v-if="studyMode === 'quiz'">
+              <label
+                class="text-xs font-bold text-slate-500 uppercase tracking-wider block"
+                >Напрямок тестування:</label
+              >
+              <div class="grid grid-cols-2 gap-2">
+                <button
+                  @click="quizDirection = 'en-ua'"
+                  :class="quizDirection === 'en-ua' ? 'bg-teal-600 text-white border-teal-600' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'"
+                  class="py-2 px-3 rounded-xl border font-medium text-xs flex items-center justify-center space-x-1 transition-all"
+                >
+                  <span>🇬🇧 ➔ 🇺🇦 En to Ua</span>
+                </button>
+                <button
+                  @click="quizDirection = 'ua-en'"
+                  :class="quizDirection === 'ua-en' ? 'bg-teal-600 text-white border-teal-600' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'"
+                  class="py-2 px-3 rounded-xl border font-medium text-xs flex items-center justify-center space-x-1 transition-all"
+                >
+                  <span>🇺🇦 ➔ 🇬🇧 Ua to En</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Select Topics block -->
+            <div class="space-y-2">
+              <label
+                class="text-xs font-bold text-slate-500 uppercase tracking-wider block"
+                >Оберіть теми для вивчення:</label
               >
 
-              <div class="space-y-2 max-h-[220px] overflow-y-auto pr-1">
+              <div class="space-y-2 max-h-[180px] overflow-y-auto pr-1">
                 <!-- Select All Option -->
                 <label
                   class="flex items-center space-x-3 p-2 rounded-xl bg-slate-50 border border-stone-100 hover:bg-stone-100/50 cursor-pointer transition-colors"
@@ -1093,10 +1279,9 @@
               <div class="flex items-start space-x-2.5">
                 <i class="fa-solid fa-circle-info text-emerald-600 mt-0.5"></i>
                 <p class="text-xs text-emerald-950 font-medium leading-relaxed">
-                  Система автоматично сформує чергу з
-                  <strong>10 ідіом</strong> у випадковому порядку. Вирази, які
-                  викликають складність, або які ви ще не бачили, з’являтимуться
-                  частіше.
+                  Система сформує чергу з <strong>10 ідіом</strong>. Складні
+                  вирази з’являються значно частіше. При помилці в тесті статус
+                  слова скинеться.
                 </p>
               </div>
             </div>
@@ -1403,7 +1588,7 @@
             {
               id: 'i9',
               verb: "have butterflies in one's stomach",
-              translation: 'нервувати (особливо перед виступом чи закоханістю)',
+              translation: 'нервувати перед виступом чи через закоханість',
               topicId: 't1',
               status: 'new',
               example: 'I had butterflies in my stomach before the interview.',
@@ -1464,7 +1649,7 @@
             {
               id: 'i15',
               verb: 'beside oneself',
-              translation: 'бути поза собою (від горя чи радості)',
+              translation: 'бути поза собою від горя чи радості',
               topicId: 't1',
               status: 'new',
               example:
@@ -1647,8 +1832,7 @@
             {
               id: 'i33',
               verb: "on the edge of one's seat",
-              translation:
-                'з нетерпінням очікувати розвитку подій, затамувавши поди',
+              translation: 'з нетерпінням очікувати розвитку подій',
               topicId: 't1',
               status: 'new',
               example: 'The movie’s ending kept me on the edge of my seat.',
@@ -1658,7 +1842,7 @@
             {
               id: 'i34',
               verb: 'hit the roof',
-              translation: 'розізлитися вкрай, стрибати до стелі від люті',
+              translation: 'розізлитися вкрай, стрибати від люті',
               topicId: 't1',
               status: 'new',
               example: 'My dad hit the roof when he saw the broken window.',
@@ -1753,8 +1937,7 @@
             {
               id: 'i43',
               verb: 'cut corners',
-              translation:
-                'халтурити, йти найпростішим і дешевим шляхом на шкоду якості',
+              translation: 'халтурити, йти найпростішим шляхом на шкоду якості',
               topicId: 't2',
               status: 'new',
               example:
@@ -1882,8 +2065,7 @@
             {
               id: 'i55',
               verb: 'in the same boat',
-              translation:
-                'в однакових умовах, в одному човні (про неприємності)',
+              translation: 'в однакових умовах, в одному човні',
               topicId: 't2',
               status: 'new',
               example: 'Don’t complain, we are all in the same boat here.',
@@ -1936,7 +2118,7 @@
             {
               id: 'i60',
               verb: 'the sky is the limit',
-              translation: 'немає ніяких меж для розвитку/можливостей',
+              translation: 'немає ніяких меж для розвитку',
               topicId: 't2',
               status: 'new',
               example:
@@ -1947,7 +2129,7 @@
             {
               id: 'i61',
               verb: 'put something on hold',
-              translation: 'відкласти справу на потім, заморозити',
+              translation: 'відклати справу на потім, заморозити',
               topicId: 't2',
               status: 'new',
               example:
@@ -1958,8 +2140,7 @@
             {
               id: 'i62',
               verb: 'gain ground',
-              translation:
-                'просуватися вперед, робити успіхи, ставати популярнішим',
+              translation: 'просуватися вперед, ставати популярнішим',
               topicId: 't2',
               status: 'new',
               example:
@@ -1992,7 +2173,7 @@
             {
               id: 'i65',
               verb: 'pass with flying colors',
-              translation: 'успішно та з блиском скласти іспит/випробування',
+              translation: 'успішно та з блиском скласти іспит',
               topicId: 't2',
               status: 'new',
               example: 'She passed her driving test with flying colors.',
@@ -2098,7 +2279,7 @@
             {
               id: 'i75',
               verb: "stand one's ground",
-              translation: 'відстоювати свою позицію, стояти на своєму',
+              translation: 'відстоювати свою позицію, стоять на своєму',
               topicId: 't2',
               status: 'new',
               example:
@@ -2219,7 +2400,7 @@
               id: 'i86',
               verb: 'speak of the devil',
               translation:
-                'про вовка промовка (коли з’являється той, про кого говорили)',
+                'про вовка промовка (коли з’являється об’єкт розмови)',
               topicId: 't3',
               status: 'new',
               example: 'Speak of the devil! Here comes Mark now.',
@@ -2316,8 +2497,7 @@
             {
               id: 'i95',
               verb: 'get a word in edgeways',
-              translation:
-                'вставити хоч слово (під час розмови з балакучою людиною)',
+              translation: 'вставити хоч слово під час чужої балаканини',
               topicId: 't3',
               status: 'new',
               example: 'She talked so much I couldn’t get a word in edgeways.',
@@ -2389,7 +2569,7 @@
             {
               id: 'i102',
               verb: 'lose touch',
-              translation: 'втратити зв’язок (через час чи відстань)',
+              translation: 'втратити зв’язок через час чи відстань',
               topicId: 't3',
               status: 'new',
               example: 'We were friends in school, but we lost touch.',
@@ -2494,7 +2674,7 @@
             {
               id: 'i112',
               verb: 'have words with',
-              translation: 'мати серйозну (часто неприємну) розмову з кимось',
+              translation: 'мати серйозну розмову з кимось',
               topicId: 't3',
               status: 'new',
               example: 'I need to have words with my noisy neighbor.',
@@ -2588,7 +2768,7 @@
             {
               id: 'i121',
               verb: 'once in a blue moon',
-              translation: 'раз на паску, дуже рідко',
+              translation: 'раз на паску, надзвичайно рідко',
               topicId: 't4',
               status: 'new',
               example: 'We go out for dinner once in a blue moon.',
@@ -2652,7 +2832,7 @@
             {
               id: 'i127',
               verb: 'on a shoestring',
-              translation: 'на мізерні кошти, з дуже скромним бюджетом',
+              translation: 'на мізерні кошти, зі скромним бюджетом',
               topicId: 't4',
               status: 'new',
               example: 'We traveled around Europe on a shoestring.',
@@ -2682,7 +2862,7 @@
             {
               id: 'i130',
               verb: 'break the bank',
-              translation: 'сильно вдарити по кишені, розірити (жарт.)',
+              translation: 'сильно вдарити по кишені, розорити',
               topicId: 't4',
               status: 'new',
               example: 'This vacation will break the bank, but we deserve it.',
@@ -2722,7 +2902,7 @@
             {
               id: 'i134',
               verb: 'against the clock',
-              translation: 'у шаленому поспіху, навивипередки з часом',
+              translation: 'у шаленому поспіху, наввипередки з часом',
               topicId: 't4',
               status: 'new',
               example:
@@ -2733,7 +2913,7 @@
             {
               id: 'i135',
               verb: 'kill time',
-              translation: 'вбивати час (під час очікування)',
+              translation: 'вбивати час під час очікування',
               topicId: 't4',
               status: 'new',
               example: 'We played cards to kill time at the train station.',
@@ -2763,8 +2943,7 @@
             {
               id: 'i138',
               verb: 'touch wood',
-              translation:
-                'плюнути через ліве плече, постукати по дереву (щоб не наврочити)',
+              translation: 'плюнути через ліве плече, постукати по дереву',
               topicId: 't4',
               status: 'new',
               example: 'I haven’t been sick all year, touch wood.',
@@ -2774,7 +2953,7 @@
             {
               id: 'i139',
               verb: 'third time lucky',
-              translation: 'бог трійцю любить (на третій раз точно пощастить)',
+              translation: 'бог трійцю любить (на третій раз пощастить)',
               topicId: 't4',
               status: 'new',
               example: 'I failed twice, but third time lucky!',
@@ -2794,7 +2973,7 @@
             {
               id: 'i141',
               verb: 'from rags to riches',
-              translation: 'із грязі в князі, від бідності до багатства',
+              translation: 'від бідності до багатства, із грязі в князі',
               topicId: 't4',
               status: 'new',
               example: 'The biography details his rise from rags to riches.',
@@ -2856,7 +3035,7 @@
             {
               id: 'i147',
               verb: 'highway robbery',
-              translation: 'грабунок серед білого дня (про завищені ціни)',
+              translation: 'грабунок серед білого дня (про високі ціни)',
               topicId: 't4',
               status: 'new',
               example:
@@ -2908,7 +3087,7 @@
             {
               id: 'i152',
               verb: 'in the long run',
-              translation: 'в кінцевому підсумку, у довгостроковій перспективі',
+              translation: 'в кінцевому підсумку, у перспективі',
               topicId: 't4',
               status: 'new',
               example:
@@ -2959,7 +3138,7 @@
             {
               id: 'i157',
               verb: 'live from hand to mouth',
-              translation: 'жити від зарплати до зарплати, ледве перебиватися',
+              translation: 'жити від зарплати до зарплати, перебиватися',
               topicId: 't4',
               status: 'new',
               example:
@@ -2970,7 +3149,7 @@
             {
               id: 'i158',
               verb: 'make a quick buck',
-              translation: 'швидко зрубати грошенят, заробити легкі гроші',
+              translation: 'швидко зрубати грошей, заробити легкі гроші',
               topicId: 't4',
               status: 'new',
               example: 'He’s always looking for a scheme to make a quick buck.',
@@ -3004,8 +3183,7 @@
             {
               id: 'i161',
               verb: 'on the fence',
-              translation:
-                'вагатися, не могти обрати сторону або прийняти рішення',
+              translation: 'вагатися, не могти обрати сторону чи рішення',
               topicId: 't5',
               status: 'new',
               example:
@@ -3070,7 +3248,7 @@
             {
               id: 'i167',
               verb: 'night owl',
-              translation: 'нічна сова, любитель не спати ночами',
+              translation: 'нічна сова, любитель пізнього неспання',
               topicId: 't5',
               status: 'new',
               example:
@@ -3081,7 +3259,7 @@
             {
               id: 'i168',
               verb: 'black sheep',
-              translation: 'паршива вівця, біла ворона (в сім’ї чи групі)',
+              translation: 'паршива вівця, біла ворона (в сім’ї)',
               topicId: 't5',
               status: 'new',
               example:
@@ -3155,8 +3333,7 @@
             {
               id: 'i175',
               verb: 'put all eggs in one basket',
-              translation:
-                'ставити все на одну карту, ризикувати всім одночасно',
+              translation: 'ставити все на одну карту, ризикувати всім',
               topicId: 't5',
               status: 'new',
               example:
@@ -3167,7 +3344,7 @@
             {
               id: 'i176',
               verb: 'the last straw',
-              translation: 'остання крапля (що переповнила чашу терпіння)',
+              translation: 'остання крапля (що переповнила терпіння)',
               topicId: 't5',
               status: 'new',
               example: 'When my car broke down today, that was the last straw.',
@@ -3177,11 +3354,11 @@
             {
               id: 'i177',
               verb: 'judge a book by its cover',
-              translation: 'судити про когось/щось лише за зовнішнім виглядом',
+              translation: 'судити про когось лише за зовнішністю',
               topicId: 't5',
               status: 'new',
               example:
-                'He looks poor, but he’s incredibly wealthy; never judge a book by its cover.',
+                'He looks poor, but he’s wealthy; never judge a book by its cover.',
               lastReviewed: null,
               repetitions: 0,
             },
@@ -3233,7 +3410,7 @@
             {
               id: 'i182',
               verb: 'a pain in the neck',
-              translation: 'кістка в горлі, зануда, щось надокучливе',
+              translation: 'кістка в горлі, зануда, надокучливе явище',
               topicId: 't5',
               status: 'new',
               example: 'My little brother can be a real pain in the neck.',
@@ -3265,7 +3442,7 @@
             {
               id: 'i185',
               verb: 'at the drop of a hat',
-              translation: 'без вагань, миттєво при першому запиті',
+              translation: 'без вагань, миттєво за першої потреби',
               topicId: 't5',
               status: 'new',
               example: 'She is ready to travel at the drop of a hat.',
@@ -3358,7 +3535,7 @@
             {
               id: 'i194',
               verb: 'in a nutshell',
-              translation: 'коротко кажучи, в двох словах',
+              translation: 'коротко кажучи, у двох словах',
               topicId: 't5',
               status: 'new',
               example: 'This is, in a nutshell, the main plan.',
@@ -3390,7 +3567,7 @@
             {
               id: 'i197',
               verb: "play devil's advocate",
-              translation: 'грати роль опонента заради дискусії',
+              translation: 'грати роль опонента в суперечці',
               topicId: 't5',
               status: 'new',
               example:
@@ -3412,7 +3589,7 @@
             {
               id: 'i199',
               verb: 'take with a pinch of salt',
-              translation: 'ставитися критично, сприймати з сумнівом',
+              translation: 'ставитися критично, піддавати сумніву',
               topicId: 't5',
               status: 'new',
               example:
@@ -3436,6 +3613,14 @@
           const currentTab = ref('dashboard');
           const topics = ref([]);
           const verbs = ref([]);
+
+          // Quiz Specific State
+          const studyMode = ref('cards'); // "cards" or "quiz"
+          const quizDirection = ref('en-ua'); // "en-ua" (En -> Ua) or "ua-en" (Ua -> En)
+          const quizOptions = ref([]);
+          const selectedOption = ref(null);
+          const isAnswered = ref(false);
+          const isCorrectAnswer = ref(false);
 
           // Load on Mount
           onMounted(() => {
@@ -4078,7 +4263,129 @@
             sessionGrades.value = { hard: 0, learning: 0, mastered: 0 };
 
             modals.value.studySetup.show = false;
+
+            if (studyMode.value === 'quiz') {
+              initQuizItem();
+            }
+
             changeTab('study');
+          }
+
+          // QUIZ GENERATION & INTERACTION LOGIC
+          function initQuizItem() {
+            selectedOption.value = null;
+            isAnswered.value = false;
+            isCorrectAnswer.value = false;
+
+            const current = currentStudyVerb.value;
+            if (!current) return;
+
+            // Determine what is correct answer text depending on direction
+            const correctText =
+              quizDirection.value === 'en-ua'
+                ? current.translation
+                : current.verb;
+
+            // Create pool of possible wrong answers
+            let wrongPool = verbs.value.filter((v) => v.id !== current.id);
+            if (wrongPool.length < 3) {
+              wrongPool = initialVerbs.filter((v) => v.verb !== current.verb);
+            }
+
+            // Shuffle and pick 3 wrong answers
+            let shuffledWrong = [...wrongPool].sort(() => 0.5 - Math.random());
+            let wrongs = shuffledWrong.slice(0, 3).map((v) => {
+              return quizDirection.value === 'en-ua' ? v.translation : v.verb;
+            });
+
+            // Generate and shuffle final options array
+            let opts = [
+              { text: correctText, isCorrect: true },
+              ...wrongs.map((w) => ({ text: w, isCorrect: false })),
+            ];
+
+            quizOptions.value = opts.sort(() => 0.5 - Math.random());
+          }
+
+          function selectOption(index) {
+            if (isAnswered.value) return;
+            selectedOption.value = index;
+            isAnswered.value = true;
+
+            const opt = quizOptions.value[index];
+            const current = currentStudyVerb.value;
+
+            if (opt.isCorrect) {
+              isCorrectAnswer.value = true;
+            } else {
+              isCorrectAnswer.value = false;
+              // Incorrect Choice: reset status to 'new' (as requested)
+              updateVerbStatus(current.id, 'new');
+              sessionGrades.value.hard++;
+            }
+          }
+
+          // User decides whether to mastered/archive correctly answered verb
+          function handleMasteryChoice(wantMastered) {
+            const current = currentStudyVerb.value;
+            if (!current) return;
+
+            if (wantMastered) {
+              updateVerbStatus(current.id, 'mastered');
+              sessionGrades.value.mastered++;
+            } else {
+              updateVerbStatus(current.id, 'learning');
+              sessionGrades.value.learning++;
+            }
+
+            advanceQuiz();
+          }
+
+          function handleWrongAnswerNext() {
+            advanceQuiz();
+          }
+
+          function advanceQuiz() {
+            if (currentVerbIndex.value + 1 < studyQueue.value.length) {
+              currentVerbIndex.value++;
+              initQuizItem();
+            } else {
+              changeTab('recap');
+            }
+          }
+
+          function updateVerbStatus(verbId, newStatus) {
+            const idx = verbs.value.findIndex(
+              (v) => String(v.id) === String(verbId),
+            );
+            if (idx !== -1) {
+              verbs.value[idx].status = newStatus;
+              verbs.value[idx].lastReviewed = new Date().toISOString();
+              verbs.value[idx].repetitions =
+                (verbs.value[idx].repetitions || 0) + 1;
+              saveVerbsToStorage();
+            }
+          }
+
+          function getOptionClass(option, index) {
+            // If not answered yet
+            if (!isAnswered.value) {
+              return 'bg-white hover:bg-emerald-50/40 border-stone-200 text-slate-700 hover:border-emerald-300 cursor-pointer';
+            }
+
+            // If answered:
+            // Correct Option
+            if (option.isCorrect) {
+              return 'bg-emerald-50 border-emerald-500 text-emerald-950 font-bold';
+            }
+
+            // Incorrectly selected Option
+            if (selectedOption.value === index && !option.isCorrect) {
+              return 'bg-rose-50 border-rose-500 text-rose-950 font-bold';
+            }
+
+            // All other non-selected options
+            return 'bg-slate-50 border-slate-200 text-slate-400 opacity-60 cursor-not-allowed';
           }
 
           function flipCard() {
@@ -4090,18 +4397,7 @@
             if (!currentVerb) return;
 
             sessionGrades.value[grade]++;
-
-            const index = verbs.value.findIndex(
-              (v) => String(v.id) === String(currentVerb.id),
-            );
-            if (index !== -1) {
-              verbs.value[index].status = grade;
-              verbs.value[index].lastReviewed = new Date().toISOString();
-              verbs.value[index].repetitions =
-                (verbs.value[index].repetitions || 0) + 1;
-            }
-
-            saveVerbsToStorage();
+            updateVerbStatus(currentVerb.id, grade);
 
             if (currentVerbIndex.value + 1 < studyQueue.value.length) {
               cardFlipped.value = false;
@@ -4172,6 +4468,19 @@
             isAllTopicsSelected,
             notification,
             fileInput,
+
+            // Quiz specific states
+            studyMode,
+            quizDirection,
+            quizOptions,
+            selectedOption,
+            isAnswered,
+            isCorrectAnswer,
+            initQuizItem,
+            selectOption,
+            getOptionClass,
+            handleMasteryChoice,
+            handleWrongAnswerNext,
 
             isDashboardTab,
             isVerbsTab,
